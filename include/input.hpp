@@ -1,6 +1,6 @@
 /*
- *  File        : types.hpp
- *  Description : Header file for types declarations
+ *  File        : input.hpp
+ *  Description : Header file for input logic
  *  Author      : Wei Jiun Lim
  *  Created     : 10 May 2026
  */
@@ -11,7 +11,7 @@
  *  Includes
  * ================================================================================================================= */
 
-#include <string>
+#include "types.hpp"
 
 /* ====================================================================================================================
  *  Namespace Declarations
@@ -24,32 +24,13 @@ namespace othello
     *  Class Definitions
     * ============================================================================================================== */
 
-    /* Each cell on the game board */
-    enum class CellState
+    class PlayerInput
     {
-        Empty,
-        Black,
-        White
-    };
+        public:
+            static constexpr int MOVE_STR_LENGTH = 2;
 
-    /* Player Input Types */
-    enum class InputType
-    {
-        Move,
-        NewGamePVP,
-        NewGamePVC,
-        Exit,
-        Invalid
-    };
+            PlayerInput();
 
-    /* Game Input Structure */
-    struct GameInput {
-
-        /* Type of input */
-        InputType type;
-
-        /* Row and Col, only valif for a Move Type input */
-        int row;
-        int col;
+            GameInput parseInput(std::string& inputText);
     };
 }

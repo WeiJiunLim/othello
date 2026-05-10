@@ -39,11 +39,11 @@ namespace
 
     constexpr int INSTRUCTIONS_ROW_START = GAMEBOARD_ROW_START + GAMEBOARD_ROW_SIZE;
     constexpr int INSTRUCTIONS_COL_START = 0;
-    constexpr int INSTRUCTIONS_ROW_SIZE  = 2;
+    constexpr int INSTRUCTIONS_ROW_SIZE  = 5;
 
     constexpr int INPUT_ROW_START = INSTRUCTIONS_ROW_START + INSTRUCTIONS_ROW_SIZE;
     constexpr int INPUT_COL_START = 0;
-    constexpr int INPUT_ROW_SIZE  = 1;
+    constexpr int INPUT_ROW_SIZE  = 2;
 }
 
 /* ====================================================================================================================
@@ -66,6 +66,14 @@ namespace othello
         std::cout << CLEAR_SCREEN << MOVE_HOME;
     }
 
+    void Display::clearSection(int row_start, int col_start, int row_size)
+    {
+        for (int row = row_start; row < (row_start + row_size); row++) {
+            moveCursor(row_start, col_start);
+            std::cout << CLEAR_LINE << "\r";
+        }
+    }
+
     void Display::moveCursor(int row, int col)
     {
         std::cout << "\033[" << row << ";" << col << "H";
@@ -79,12 +87,14 @@ namespace othello
 
     void Display::drawHeader(const std::string& title, const std::string& version)
     {
+        clearSection(HEADER_ROW_START, HEADER_COL_START, HEADER_ROW_SIZE);
         moveCursor(HEADER_ROW_START, HEADER_COL_START);
         drawText(title + " v" + version);
     }
 
     void Display::drawScoreBoard(const std::string& p1_name, const std::string& p2_name, const int p1_score, const int p2_score)
     {
+        clearSection(SCOREBOARD_ROW_START, SCOREBOARD_COL_START, SCOREBOARD_ROW_SIZE);
         moveCursor(SCOREBOARD_ROW_START, SCOREBOARD_COL_START);
         drawText("WHITE (" + p1_name + "): " + std::to_string(p1_score) + " pieces");
         drawText("BLACK (" + p2_name + "): " + std::to_string(p2_score) + " pieces");
@@ -92,6 +102,7 @@ namespace othello
 
     void Display::drawGameBoard(const GameBoard& board)
     {
+        clearSection(GAMEBOARD_ROW_START, GAMEBOARD_COL_START, GAMEBOARD_ROW_SIZE);
         moveCursor(GAMEBOARD_ROW_START, GAMEBOARD_COL_START);
 
         // drawText("  A B C D E F G H");
@@ -139,12 +150,14 @@ namespace othello
 
     void Display::drawInstructions(const std::string& text)
     {
+        clearSection(INSTRUCTIONS_ROW_START, INSTRUCTIONS_COL_START, INSTRUCTIONS_ROW_SIZE);
         moveCursor(INSTRUCTIONS_ROW_START, INSTRUCTIONS_COL_START);
         drawText(text);
     }
 
     void Display::drawInput(const std::string& text)
     {
+        clearSection(INPUT_ROW_START, INPUT_COL_START, INPUT_ROW_SIZE);
         moveCursor(INPUT_ROW_START, INPUT_COL_START);
         drawText(text);
         std::cout << "\b\b\b\033[K";

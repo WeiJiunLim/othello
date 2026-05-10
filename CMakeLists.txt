@@ -6,7 +6,7 @@ project(othello)
 # C++ Standard
 # =====================================================================================================================
 
-set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 # =====================================================================================================================
@@ -42,6 +42,16 @@ target_include_directories(game PUBLIC include)
 target_link_libraries(game PRIVATE project_warnings)
 
 # =====================================================================================================================
+# Input Library
+# =====================================================================================================================
+
+add_library(input
+    src/input.cpp
+)
+target_include_directories(input PUBLIC include)
+target_link_libraries(input PRIVATE project_warnings)
+
+# =====================================================================================================================
 # Main Executable
 # =====================================================================================================================
 
@@ -53,4 +63,5 @@ target_link_libraries(othello
     PRIVATE
         project_warnings
         display
-        game)
+        game
+        input)
