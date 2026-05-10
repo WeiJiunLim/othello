@@ -19,34 +19,32 @@
  *  Constants / Macros
  * ================================================================================================================= */
 
+/* Software info */
+constexpr const char* SW_NAME = "Othello";
+constexpr const char* SW_VERSION = "0.1";
+constexpr const char* SW_INSTRUCTIONS =
+"P: New Game (Player vs Player)\n\
+N: New Game (Player vs Computer)\n\
+X: Exit Game\n\
+[col][row]: Make a move [A-H][1-8], e.g. D3, E6\n";
+
  /* ====================================================================================================================
  *  Public Functions
  * ================================================================================================================= */
 
 int main() {
 
-    othello::Display display;
+    othello::Display display(SW_NAME, SW_VERSION, SW_INSTRUCTIONS);
     othello::GameBoard gameBoard;
     othello::PlayerInput playerInput;
 
-    /* Set up display */
-    display.drawHeader("Othello", "0.1");
-    display.drawScoreBoard("Player 1", "Player 2", 123, 456);
-    display.drawGameBoard(gameBoard);
-    display.drawInstructions(
-"P: New Game (Player vs Player)\n\
-N: New Game (Player vs Computer)\n\
-X: Exit Game\n\
-[col][row]: Make a move [A-H][1-8], e.g. D3, E6\n");
-    display.drawInput("New PvP Game started.\nYour move: ");
-
-    // TODO: game.reset(gameBoard)
+    /* Start a PVP game by default */
+    gameBoard.reset(othello::GameType::PVP);
 
     while (1) {
 
-        bool exitGame = false;
-
-        // TODO: display.update(gameBoard)
+        /* Refresh game display */
+        display.refreshGame(gameBoard);
 
         /* Get user input */
         std::string inputStr;
@@ -59,33 +57,29 @@ X: Exit Game\n\
         switch (gameInput.type)
         {
             case othello::InputType::NewGamePVP:
-                // TODO: game.reset(gameBoard, PVP)
-                display.drawInput("New PvP Game started.\nYour move: ");
+                gameBoard.reset(othello::GameType::PVP);
                 break;
 
             case othello::InputType::NewGamePVC:
-                // TODO: game.reset(gameBoard, PVC)
-                display.drawInput("New PvC Game started.\nYour move: ");
+                gameBoard.reset(othello::GameType::PVC);
                 break;
 
             case othello::InputType::Exit:
-                exitGame = true;
+                gameBoard.setGameState(othello::GameState::Exit);
                 break;
 
             case othello::InputType::Move:
-                // TODO: Call game logic to execute move
-                // TODO: game.move(gameInput)
-                display.drawInput("Move " + inputStr + " executed.\nYour move: ");
+                gameBoard.move(gameInput);
                 break;
 
             default:
                 /* Invalid input */
-                display.drawInput("Invalid input - " + inputStr + "\nYour move: ");
+                gameBoard.setGameState(othello::GameState::InvalidInput);
                 break;
         }
 
-        if (exitGame) {
-            display.drawInput("Good bye!\n");
+        /* Check for exit request */
+        if (gameBoard.getGameState() == othello::GameState::Exit) {
             break;
         }
     }

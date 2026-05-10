@@ -12,6 +12,7 @@
  * ================================================================================================================= */
 
 #include "types.hpp"
+#include <array>
 
 /* ====================================================================================================================
  *  Namespace Declarations
@@ -30,19 +31,21 @@ namespace othello
     {
         public:
 
-            Display();
+            Display(const std::string& title, const std::string& version, const std::string& instructions);
 
-            void clear();
-            void drawHeader(const std::string& title, const std::string& version);
-            void drawScoreBoard(const std::string& p1_name, const std::string& p2_name, const int p1_score, const int p2_score);
-            void drawGameBoard(const GameBoard& board);
-            void drawInstructions(const std::string& text);
-            void drawInput(const std::string& text);
+            void refreshGame(const GameBoard& board);
 
         private:
 
+            void clear();
             void clearSection(Position pos, int row_size);
             void moveCursor(Position pos);
             void drawText(const std::string& text);
+
+            void drawHeader(const std::string& title, const std::string& version);
+            void drawScoreBoard(const std::array<PlayerInfo, 2>& playerInfo);
+            void drawGameBoard(const GameBoard& board);
+            void drawInstructions(const std::string& text);
+            void drawInput(const GameBoard& board);
     };
 }

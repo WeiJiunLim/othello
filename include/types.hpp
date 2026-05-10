@@ -42,6 +42,24 @@ namespace othello
         Invalid
     };
 
+    /* Game Type */
+    enum class GameType
+    {
+        PVP,
+        PVC
+    };
+
+    /* Game state */
+    enum class GameState {
+
+        NewGamePVP,
+        NewGamePVC,
+        ValidMove,
+        InvalidMove,
+        InvalidInput,
+        Exit
+    };
+
     /* Position structure */
     struct Position {
 
@@ -58,4 +76,15 @@ namespace othello
         /* Position, only valid for a Move Type input */
         Position pos;
     };
+
+    /* Player Info Structure */
+    struct PlayerInfo {
+
+        /* Player Name */
+        std::string name;
+
+        /* Score */
+        int score;
+    };
+
 }

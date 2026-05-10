@@ -28,14 +28,34 @@ namespace othello
 {
     GameBoard::GameBoard()
     {
-        GameBoard::reset();
+        GameBoard::reset(GameType::PVP);
     }
 
-    void GameBoard::reset()
+    void GameBoard::reset(GameType gameType)
     {
-        for (int row = 0; row < SIZE; row++) {
+        /* Set to black's turn */
+        isBlackTurn = true;
 
-            for (int col = 0; col < SIZE; col++) {
+        /* Reset player info */
+        playerInfo[0].name = "Player 1";
+
+        if (gameType == GameType::PVP) {
+
+            playerInfo[1].name = "Player 2";
+            setGameState(GameState::NewGamePVP);
+        }
+        else {
+
+            playerInfo[1].name = "Computer";
+            setGameState(GameState::NewGamePVC);
+        }
+        playerInfo[0].score = 0;
+        playerInfo[1].score = 0;
+
+        /* Clear all cells on board */
+        for (int row = 0; row < BOARD_SIZE; row++) {
+
+            for (int col = 0; col < BOARD_SIZE; col++) {
                 board[row][col] = CellState::Empty;
             }
         }
@@ -47,6 +67,31 @@ namespace othello
         setCell({3, 4}, CellState::Black);
     }
 
+    GameState GameBoard::getGameState() const
+    {
+        return (gameState);
+    }
+
+    void GameBoard::setGameState(GameState state)
+    {
+        gameState = state;
+    }
+
+    const std::array<PlayerInfo, GameBoard::NUM_PLAYERS>& GameBoard::getPlayerInfo() const
+    {
+        return (playerInfo);
+    }
+
+    bool GameBoard::getIsBlackTurn() const
+    {
+        return (isBlackTurn);
+    }
+
+    void GameBoard::toggleIsBlackTurn()
+    {
+        isBlackTurn = !isBlackTurn;
+    }
+
     CellState GameBoard::getCell(Position pos) const
     {
         return (board[pos.row][pos.col]);
@@ -55,5 +100,25 @@ namespace othello
     void GameBoard::setCell(Position pos, CellState state)
     {
         board[pos.row][pos.col] = state;
+    }
+
+    void GameBoard::move(GameInput& gameInput)
+    {
+        /* Input has been verified before calling this function */
+
+        /* Check if move is valid */
+        // TODO: isMoveValid(getIsBlackTurn(), gameInput.pos)
+        {
+            /* Update game board */
+            setCell(gameInput.pos, (getIsBlackTurn() ? CellState::Black : CellState::White));
+            toggleIsBlackTurn();
+            setGameState(GameState::ValidMove);
+
+            // TODO: Update flipped cells as well
+        }
+        // else {
+        //     setGameState(GameState::InvalidMove);
+        // }
+
     }
 }

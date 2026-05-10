@@ -43,7 +43,7 @@ namespace
 
     constexpr int INPUT_ROW_START = INSTRUCTIONS_ROW_START + INSTRUCTIONS_ROW_SIZE;
     constexpr int INPUT_COL_START = 0;
-    constexpr int INPUT_ROW_SIZE  = 2;
+    constexpr int INPUT_ROW_SIZE  = 3;
 }
 
 /* ====================================================================================================================
@@ -56,9 +56,26 @@ namespace
 
 namespace othello
 {
-    Display::Display()
+    Display::Display(const std::string& title, const std::string& version, const std::string& instructions)
     {
         Display::clear();
+
+        /* Set up permanent display sections */
+        drawHeader(title, version);
+        drawInstructions(instructions);
+    }
+
+    void Display::refreshGame(const GameBoard& board){
+
+        /* Refresh Score board */
+        drawScoreBoard(board.getPlayerInfo());
+
+        /* Refresh Game board */
+        drawGameBoard(board);
+
+        /* Refresh Input section */
+        drawInput(board);
+
     }
 
     void Display::clear()
@@ -69,7 +86,7 @@ namespace othello
     void Display::clearSection(Position pos, int row_size)
     {
         for (int row = pos.row; row < (pos.row + row_size); row++) {
-            moveCursor(pos);
+            moveCursor({.row = row, .col = pos.col});
             std::cout << CLEAR_LINE << "\r";
         }
     }
@@ -93,13 +110,13 @@ namespace othello
         drawText(title + " v" + version);
     }
 
-    void Display::drawScoreBoard(const std::string& p1_name, const std::string& p2_name, const int p1_score, const int p2_score)
+    void Display::drawScoreBoard(const std::array<PlayerInfo, 2>& playerInfo)
     {
         Position pos = {.row = SCOREBOARD_ROW_START, .col = SCOREBOARD_COL_START};
         clearSection(pos, SCOREBOARD_ROW_SIZE);
         moveCursor(pos);
-        drawText("WHITE (" + p1_name + "): " + std::to_string(p1_score) + " pieces");
-        drawText("BLACK (" + p2_name + "): " + std::to_string(p2_score) + " pieces");
+        drawText("BLACK (" + playerInfo[0].name + "): " + std::to_string(playerInfo[0].score) + " pieces");
+        drawText("WHITE (" + playerInfo[1].name + "): " + std::to_string(playerInfo[1].score) + " pieces");
     }
 
     void Display::drawGameBoard(const GameBoard& board)
@@ -121,11 +138,11 @@ namespace othello
 
         drawText("  A B C D E F G H");
 
-        for (int row = 0; row < GameBoard::SIZE; row++) {
+        for (int row = 0; row < GameBoard::BOARD_SIZE; row++) {
 
             std::string row_str = std::to_string(row + 1) + " ";
 
-            for (int col = 0; col < GameBoard::SIZE; col++) {
+            for (int col = 0; col < GameBoard::BOARD_SIZE; col++) {
 
                 std::string cell = ".";
 
@@ -159,12 +176,55 @@ namespace othello
         drawText(text);
     }
 
-    void Display::drawInput(const std::string& text)
+    void Display::drawInput(const GameBoard& board)
     {
         Position pos = {.row = INPUT_ROW_START, .col = INPUT_COL_START};
         clearSection(pos, INPUT_ROW_SIZE);
         moveCursor(pos);
-        drawText(text);
+
+        std::string str;
+        std::string strTurn;
+
+        /* Update string based on turn */
+        if (board.getIsBlackTurn()) {
+            strTurn = "BLACK";
+        }
+        else {
+            strTurn = "WHITE";
+        }
+
+        /* Change text depending on Game State */
+        switch (board.getGameState())
+        {
+            case GameState::NewGamePVP:
+                str = "New PvP Game started.\n" + strTurn + "'s turn: ";
+                break;
+
+            case GameState::NewGamePVC:
+                str = "New PvC Game started.\n" + strTurn + "'s turn: ";
+                break;
+
+            case GameState::Exit:
+                str = "Good bye!";
+                break;
+
+            case GameState::ValidMove:
+                str = "Move executed.\n" + strTurn + "'s turn: ";
+                break;
+
+            case GameState::InvalidMove:
+                str = "Invalid Move!\n" + strTurn + "'s turn: ";
+                break;
+
+            case GameState::InvalidInput:
+            default:
+                str = "Invalid Input!\n" + strTurn + "'s turn: ";
+                break;
+        }
+
+        drawText(str);
+
+        /* Clear user input field on terminal */
         std::cout << "\b\b\b\033[K";
     }
 }

@@ -12,6 +12,7 @@
  * ================================================================================================================= */
 
 #include "types.hpp"
+#include <array>
 
 /* ====================================================================================================================
  *  Namespace Declarations
@@ -27,15 +28,28 @@ namespace othello
     class GameBoard
     {
         public:
-            static constexpr int SIZE = 8;
+            static constexpr int BOARD_SIZE = 8;
+            static constexpr int NUM_PLAYERS = 2;
 
             GameBoard();
 
-            void reset();
+            void reset(GameType gameType);
+            void setGameState(GameState state);
+            GameState getGameState() const;
             CellState getCell(Position pos) const;
-            void setCell(Position pos, CellState state);
+            const std::array<PlayerInfo, NUM_PLAYERS>& getPlayerInfo() const;
+            bool getIsBlackTurn() const;
+            void move(GameInput& gameInput);
 
         private:
-            CellState board[SIZE][SIZE];
+            GameState gameState;
+            CellState board[BOARD_SIZE][BOARD_SIZE];
+            std::array<PlayerInfo, NUM_PLAYERS> playerInfo;
+            bool isBlackTurn;
+
+            void setCell(Position pos, CellState state);
+            void toggleIsBlackTurn();
+
     };
+
 }
