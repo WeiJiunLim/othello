@@ -110,13 +110,13 @@ namespace othello
         drawText(title + " v" + version);
     }
 
-    void Display::drawScoreBoard(const std::array<PlayerInfo, 2>& playerInfo)
+    void Display::drawScoreBoard(const std::array<PlayerInfo, NUM_PLAYERS>& playerInfo)
     {
         Position pos = {.row = SCOREBOARD_ROW_START, .col = SCOREBOARD_COL_START};
         clearSection(pos, SCOREBOARD_ROW_SIZE);
         moveCursor(pos);
-        drawText("BLACK (" + playerInfo[0].name + "): " + std::to_string(playerInfo[0].score) + " pieces");
-        drawText("WHITE (" + playerInfo[1].name + "): " + std::to_string(playerInfo[1].score) + " pieces");
+        drawText("BLACK (" + playerInfo[BLACK].name + "): " + std::to_string(playerInfo[BLACK].score) + " pieces");
+        drawText("WHITE (" + playerInfo[WHITE].name + "): " + std::to_string(playerInfo[WHITE].score) + " pieces");
     }
 
     void Display::drawGameBoard(const GameBoard& board)
@@ -209,16 +209,16 @@ namespace othello
                 break;
 
             case GameState::ValidMove:
-                str = "Move executed.\n" + strTurn + "'s turn: ";
+                str = "Move executed - " + board.gameInput.strInput + "\n" + strTurn + "'s turn: ";
                 break;
 
             case GameState::InvalidMove:
-                str = "Invalid Move!\n" + strTurn + "'s turn: ";
+                str = "Invalid Move! - " + board.gameInput.strInput + "\n" + strTurn + "'s turn: ";
                 break;
 
             case GameState::InvalidInput:
             default:
-                str = "Invalid Input!\n" + strTurn + "'s turn: ";
+                str = "Invalid Input! - " + board.gameInput.strInput + "\n" + strTurn + "'s turn: ";
                 break;
         }
 

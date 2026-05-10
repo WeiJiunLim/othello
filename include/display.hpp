@@ -43,7 +43,7 @@ namespace othello
             void drawText(const std::string& text);
 
             void drawHeader(const std::string& title, const std::string& version);
-            void drawScoreBoard(const std::array<PlayerInfo, 2>& playerInfo);
+            void drawScoreBoard(const std::array<PlayerInfo, NUM_PLAYERS>& playerInfo);
             void drawGameBoard(const GameBoard& board);
             void drawInstructions(const std::string& text);
             void drawInput(const GameBoard& board);

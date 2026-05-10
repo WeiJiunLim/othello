@@ -34,12 +34,16 @@ namespace othello
     GameInput PlayerInput::parseInput(std::string& inputText)
     {
         GameInput parsedInput = {.type = InputType::Invalid,
-                                 .pos = {.row = 0, .col = 0}};
+                                 .pos = {.row = 0, .col = 0},
+                                 .strInput = "Unknown"};
 
         /* Convert all to upper case */
         for (char& c : inputText) {
             c = std::toupper(c);
         }
+
+        /* Store input string */
+        parsedInput.strInput = inputText;
 
         /* Check for commands first */
         if (inputText == "P") {

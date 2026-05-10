@@ -29,7 +29,7 @@ namespace othello
     {
         public:
             static constexpr int BOARD_SIZE = 8;
-            static constexpr int NUM_PLAYERS = 2;
+            GameInput gameInput;
 
             GameBoard();
 
@@ -39,6 +39,7 @@ namespace othello
             CellState getCell(Position pos) const;
             const std::array<PlayerInfo, NUM_PLAYERS>& getPlayerInfo() const;
             bool getIsBlackTurn() const;
+            int getScore(enum Player player);
             void move(GameInput& gameInput);
 
         private:
@@ -49,7 +50,8 @@ namespace othello
 
             void setCell(Position pos, CellState state);
             void toggleIsBlackTurn();
-
+            void incScore(enum Player player);
+            void decScore(enum Player player);
     };
 
 }

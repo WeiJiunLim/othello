@@ -32,6 +32,14 @@ namespace othello
         White
     };
 
+    /* Players */
+    enum Player
+    {
+        BLACK = 0,
+        WHITE = 1,
+        NUM_PLAYERS
+    };
+
     /* Player Input Types */
     enum class InputType
     {
@@ -75,6 +83,9 @@ namespace othello
 
         /* Position, only valid for a Move Type input */
         Position pos;
+
+        /* Input string - stored mostly for display purposes */
+        std::string strInput;
     };
 
     /* Player Info Structure */

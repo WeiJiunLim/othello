@@ -51,10 +51,10 @@ int main() {
         std::getline(std::cin, inputStr);
 
         /* Parse user input */
-        othello::GameInput gameInput = playerInput.parseInput(inputStr);
+        gameBoard.gameInput = playerInput.parseInput(inputStr);
 
         /* Take action on user input */
-        switch (gameInput.type)
+        switch (gameBoard.gameInput.type)
         {
             case othello::InputType::NewGamePVP:
                 gameBoard.reset(othello::GameType::PVP);
@@ -69,7 +69,7 @@ int main() {
                 break;
 
             case othello::InputType::Move:
-                gameBoard.move(gameInput);
+                gameBoard.move(gameBoard.gameInput);
                 break;
 
             default:

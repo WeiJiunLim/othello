@@ -37,20 +37,20 @@ namespace othello
         isBlackTurn = true;
 
         /* Reset player info */
-        playerInfo[0].name = "Player 1";
+        playerInfo[BLACK].name = "Player 1";
 
         if (gameType == GameType::PVP) {
 
-            playerInfo[1].name = "Player 2";
+            playerInfo[WHITE].name = "Player 2";
             setGameState(GameState::NewGamePVP);
         }
         else {
 
-            playerInfo[1].name = "Computer";
+            playerInfo[WHITE].name = "Computer";
             setGameState(GameState::NewGamePVC);
         }
-        playerInfo[0].score = 0;
-        playerInfo[1].score = 0;
+        playerInfo[BLACK].score = 0;
+        playerInfo[WHITE].score = 0;
 
         /* Clear all cells on board */
         for (int row = 0; row < BOARD_SIZE; row++) {
@@ -77,7 +77,7 @@ namespace othello
         gameState = state;
     }
 
-    const std::array<PlayerInfo, GameBoard::NUM_PLAYERS>& GameBoard::getPlayerInfo() const
+    const std::array<PlayerInfo, NUM_PLAYERS>& GameBoard::getPlayerInfo() const
     {
         return (playerInfo);
     }
@@ -99,7 +99,50 @@ namespace othello
 
     void GameBoard::setCell(Position pos, CellState state)
     {
+        CellState prevState = board[pos.row][pos.col];
+
+        /* Modify state */
         board[pos.row][pos.col] = state;
+
+        /* Modify score */
+        if (prevState != state) {
+
+            if (prevState == CellState::Empty) {
+
+                if (state == CellState::Black) {
+                    incScore(BLACK);
+                }
+                else if (state == CellState::White) {
+                    incScore(WHITE);
+                }
+            }
+            else {
+
+                if (state == CellState::Black) {
+                    incScore(BLACK);
+                    decScore(WHITE);
+                }
+                else if (state == CellState::White) {
+                    incScore(WHITE);
+                    decScore(BLACK);
+                }
+            }
+        }
+    }
+
+    int GameBoard::getScore(enum Player player)
+    {
+        return(playerInfo[player].score);
+    }
+
+    void GameBoard::incScore(enum Player player)
+    {
+        playerInfo[player].score++;
+    }
+
+    void GameBoard::decScore(enum Player player)
+    {
+        playerInfo[player].score--;
     }
 
     void GameBoard::move(GameInput& gameInput)
