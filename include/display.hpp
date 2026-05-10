@@ -11,7 +11,7 @@
  *  Includes
  * ================================================================================================================= */
 
-#include <string>
+#include "types.hpp"
 
 /* ====================================================================================================================
  *  Namespace Declarations
@@ -41,8 +41,8 @@ namespace othello
 
         private:
 
-            void clearSection(int row_start, int col_start, int row_size);
-            void moveCursor(int row, int col);
+            void clearSection(Position pos, int row_size);
+            void moveCursor(Position pos);
             void drawText(const std::string& text);
     };
 }

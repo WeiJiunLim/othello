@@ -28,16 +28,10 @@ namespace othello
 {
     GameBoard::GameBoard()
     {
-        GameBoard::clear();
-
-        /* Set starting positions */
-        setCell(3, 3, CellState::White);
-        setCell(4, 4, CellState::White);
-        setCell(4, 3, CellState::Black);
-        setCell(3, 4, CellState::Black);
+        GameBoard::reset();
     }
 
-    void GameBoard::clear()
+    void GameBoard::reset()
     {
         for (int row = 0; row < SIZE; row++) {
 
@@ -45,15 +39,21 @@ namespace othello
                 board[row][col] = CellState::Empty;
             }
         }
+
+        /* Set starting positions */
+        setCell({3, 3}, CellState::White);
+        setCell({4, 4}, CellState::White);
+        setCell({4, 3}, CellState::Black);
+        setCell({3, 4}, CellState::Black);
     }
 
-    CellState GameBoard::getCell(int row, int col) const
+    CellState GameBoard::getCell(Position pos) const
     {
-        return (board[row][col]);
+        return (board[pos.row][pos.col]);
     }
 
-    void GameBoard::setCell(int row, int col, CellState state)
+    void GameBoard::setCell(Position pos, CellState state)
     {
-        board[row][col] = state;
+        board[pos.row][pos.col] = state;
     }
 }

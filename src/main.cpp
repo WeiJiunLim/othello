@@ -38,11 +38,15 @@ int main() {
 N: New Game (Player vs Computer)\n\
 X: Exit Game\n\
 [col][row]: Make a move [A-H][1-8], e.g. D3, E6\n");
-    display.drawInput("New Game started.\nYour move: ");
+    display.drawInput("New PvP Game started.\nYour move: ");
+
+    // TODO: game.reset(gameBoard)
 
     while (1) {
 
         bool exitGame = false;
+
+        // TODO: display.update(gameBoard)
 
         /* Get user input */
         std::string inputStr;
@@ -55,22 +59,22 @@ X: Exit Game\n\
         switch (gameInput.type)
         {
             case othello::InputType::NewGamePVP:
-                // TODO: Start new game
+                // TODO: game.reset(gameBoard, PVP)
                 display.drawInput("New PvP Game started.\nYour move: ");
                 break;
 
             case othello::InputType::NewGamePVC:
-                // TODO: Start new game
+                // TODO: game.reset(gameBoard, PVC)
                 display.drawInput("New PvC Game started.\nYour move: ");
                 break;
 
             case othello::InputType::Exit:
-                display.drawInput("Good bye!");
                 exitGame = true;
                 break;
 
             case othello::InputType::Move:
                 // TODO: Call game logic to execute move
+                // TODO: game.move(gameInput)
                 display.drawInput("Move " + inputStr + " executed.\nYour move: ");
                 break;
 
@@ -81,6 +85,7 @@ X: Exit Game\n\
         }
 
         if (exitGame) {
+            display.drawInput("Good bye!\n");
             break;
         }
     }

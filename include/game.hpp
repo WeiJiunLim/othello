@@ -31,9 +31,9 @@ namespace othello
 
             GameBoard();
 
-            void clear();
-            CellState getCell(int row, int col) const;
-            void setCell(int row, int col, CellState state);
+            void reset();
+            CellState getCell(Position pos) const;
+            void setCell(Position pos, CellState state);
 
         private:
             CellState board[SIZE][SIZE];

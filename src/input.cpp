@@ -34,8 +34,7 @@ namespace othello
     GameInput PlayerInput::parseInput(std::string& inputText)
     {
         GameInput parsedInput = {.type = InputType::Invalid,
-                             .row = 0,
-                             .col = 0 };
+                                 .pos = {.row = 0, .col = 0}};
 
         /* Convert all to upper case */
         for (char& c : inputText) {
@@ -64,7 +63,7 @@ namespace othello
 
                 /* Check for valid col */
                 if ((charCol >= 'A') && (charCol <= 'H')) {
-                    parsedInput.col = charCol - 'A';
+                    parsedInput.pos.col = charCol - 'A';
                 }
                 else {
                     isValidMove = false;
@@ -72,7 +71,7 @@ namespace othello
 
                 /* Check for valid row */
                 if ((charRow >= '1') && (charRow <= '8')) {
-                    parsedInput.row = charRow - '1';
+                    parsedInput.pos.row = charRow - '1';
                 }
                 else {
                     isValidMove = false;

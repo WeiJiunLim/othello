@@ -42,14 +42,20 @@ namespace othello
         Invalid
     };
 
+    /* Position structure */
+    struct Position {
+
+        int row;
+        int col;
+    };
+
     /* Game Input Structure */
     struct GameInput {
 
         /* Type of input */
         InputType type;
 
-        /* Row and Col, only valif for a Move Type input */
-        int row;
-        int col;
+        /* Position, only valid for a Move Type input */
+        Position pos;
     };
 }
