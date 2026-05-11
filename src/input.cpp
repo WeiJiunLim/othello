@@ -46,11 +46,11 @@ namespace othello
         parsedInput.strInput = inputText;
 
         /* Check for commands first */
-        if (inputText == "P") {
-            parsedInput.type = InputType::NewGamePVP;
+        if (inputText == "2") {
+            parsedInput.type = InputType::NewGame2P;
         }
-        else if (inputText == "N") {
-            parsedInput.type = InputType::NewGamePVC;
+        else if (inputText == "1") {
+            parsedInput.type = InputType::NewGame1P;
         }
         else if (inputText == "X") {
             parsedInput.type = InputType::Exit;

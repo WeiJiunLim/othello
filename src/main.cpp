@@ -24,8 +24,8 @@ constexpr const char* SW_NAME = "Othello";
 constexpr const char* SW_VERSION = "0.1";
 
 constexpr const char* SW_INSTRUCTIONS =
-"P: New Game (Player vs Player)\n\
-N: New Game (Player vs Computer)\n\
+"1: New One Player Game (Player vs Computer)\n\
+2: New Two Player Game (Player vs Player)\n\
 X: Exit Game\n\
 [A-H][1-8]: Make a move, e.g. D3, E6\n";
 
@@ -39,8 +39,8 @@ int main() {
     othello::GameBoard gameBoard;
     othello::PlayerInput playerInput;
 
-    /* Start a PVP game by default */
-    gameBoard.reset(othello::GameType::PVP);
+    /* Start a 2 Player game by default */
+    gameBoard.reset(othello::GameType::TwoPlayer);
 
     while (true) {
 
@@ -57,12 +57,12 @@ int main() {
         /* Take action on user input */
         switch (gameBoard.gameInput.type)
         {
-            case othello::InputType::NewGamePVP:
-                gameBoard.reset(othello::GameType::PVP);
+            case othello::InputType::NewGame2P:
+                gameBoard.reset(othello::GameType::TwoPlayer);
                 break;
 
-            case othello::InputType::NewGamePVC:
-                gameBoard.reset(othello::GameType::PVC);
+            case othello::InputType::NewGame1P:
+                gameBoard.reset(othello::GameType::OnePlayer);
                 break;
 
             case othello::InputType::Exit:

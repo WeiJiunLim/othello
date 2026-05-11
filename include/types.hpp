@@ -44,8 +44,8 @@ namespace othello
     enum class InputType
     {
         Move,
-        NewGamePVP,
-        NewGamePVC,
+        NewGame1P,
+        NewGame2P,
         Exit,
         Invalid
     };
@@ -53,15 +53,15 @@ namespace othello
     /* Game Type */
     enum class GameType
     {
-        PVP,
-        PVC
+        OnePlayer,
+        TwoPlayer
     };
 
     /* Game state */
     enum class GameState {
 
-        NewGamePVP,
-        NewGamePVC,
+        NewGame1P,
+        NewGame2P,
         ValidMoveAndNextPlayerHasMoves,
         ValidMoveAndNextPlayerNoMoves,
         InvalidMove,

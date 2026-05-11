@@ -28,7 +28,7 @@ namespace othello
 {
     GameBoard::GameBoard()
     {
-        GameBoard::reset(GameType::PVP);
+        GameBoard::reset(GameType::TwoPlayer);
     }
 
     void GameBoard::reset(GameType gameType)
@@ -39,15 +39,15 @@ namespace othello
         /* Reset player info */
         playerInfo[BLACK].name = "Player 1";
 
-        if (gameType == GameType::PVP) {
+        if (gameType == GameType::TwoPlayer) {
 
             playerInfo[WHITE].name = "Player 2";
-            setGameState(GameState::NewGamePVP);
+            setGameState(GameState::NewGame2P);
         }
         else {
 
             playerInfo[WHITE].name = "Computer";
-            setGameState(GameState::NewGamePVC);
+            setGameState(GameState::NewGame1P);
         }
         playerInfo[BLACK].score = 0;
         playerInfo[WHITE].score = 0;

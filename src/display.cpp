@@ -198,12 +198,12 @@ namespace othello
         /* Change text depending on Game State */
         switch (board.getGameState())
         {
-            case GameState::NewGamePVP:
-                str = "New PvP Game started.\n" + strPlayerColour + "'s turn: ";
+            case GameState::NewGame2P:
+                str = "New Two Player Game started.\n" + strPlayerColour + "'s turn: ";
                 break;
 
-            case GameState::NewGamePVC:
-                str = "New PvC Game started.\n" + strPlayerColour + "'s turn: ";
+            case GameState::NewGame1P:
+                str = "New One Player Game started.\n" + strPlayerColour + "'s turn: ";
                 break;
 
             case GameState::Exit:
@@ -236,12 +236,12 @@ namespace othello
                     strWinner = "WHITE wins!";
                 }
 
-                str = "Game completed - no valid moves left! " + strWinner + "\nnew pv(P) game, (N)ew pvc game, or e(X)it?";
+                str = "Game completed - no valid moves left! " + strWinner + "\nnew (1)p game, new (2)p game, or e(X)it?";
                 break;
             }
 
             case GameState::InvalidInputAtGameEnded:
-                str = "Invalid Input!\nnew pv(P) game, (N)ew pvc game, or e(X)it?";
+                str = "Invalid Input!\nnew (1)p game, new (2)p game, or e(X)it?";
                 break;
 
             case GameState::InvalidInput:
