@@ -41,8 +41,8 @@ int main() {
     GameBoard gameBoard;
     PlayerInput playerInput;
 
-    /* Start a 2 Player game by default */
-    gameBoard.reset(GameType::TwoPlayer);
+    /* Start a 1 Player game by default */
+    gameBoard.reset(GameType::OnePlayer);
 
     while (true) {
 

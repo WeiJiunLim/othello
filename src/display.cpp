@@ -21,8 +21,17 @@ namespace
 {
     /* Screen manipulation ANSI codes */
     constexpr const char* CLEAR_SCREEN = "\033[2J";
-    constexpr const char* CLEAR_LINE = "\x1b[2K";
-    constexpr const char* MOVE_HOME = "\033[H";
+    constexpr const char* CLEAR_LINE   = "\x1b[2K";
+    constexpr const char* MOVE_HOME    = "\033[H";
+    constexpr const char* RESET_SCREEN = "\033[0m";
+    constexpr const char* BG_GREEN     = "\033[42m";
+    constexpr const char* FG_BLACK     = "\033[30m";
+    constexpr const char* FG_WHITE     = "\033[97m";
+
+    /* Cell pieces */
+    constexpr const char* BLACK_PIECE = "●";
+    constexpr const char* WHITE_PIECE = "●";
+    constexpr const char* EMPTY_CELL  = "-";
 
     /* UI element locations */
     constexpr int HEADER_ROW_START = 0;
@@ -124,6 +133,9 @@ namespace othello
         clearSection(pos, GAMEBOARD_ROW_SIZE);
         moveCursor(pos);
 
+        /* Set Background */
+        std::cout << BG_GREEN;
+
         // drawText("  A B C D E F G H");
         // drawText("1 - - - - - - - - ");
         // drawText("2 - - - - - - - - ");
@@ -135,11 +147,11 @@ namespace othello
         // drawText("8 - - - - - - - - ");
         // drawText("                  ");
 
-        drawText("  A B C D E F G H");
+        drawText("  A B C D E F G H ");
 
         for (int row = 0; row < GameBoard::BOARD_SIZE; row++) {
 
-            std::string row_str = std::to_string(row + 1) + " ";
+            std::cout << FG_WHITE << std::to_string(row + 1);
 
             for (int col = 0; col < GameBoard::BOARD_SIZE; col++) {
 
@@ -148,23 +160,24 @@ namespace othello
                 switch (board.getCell({row, col})) {
 
                     case CellState::Empty:
-                        cell = "-";
+                        std::cout << FG_BLACK << " " << EMPTY_CELL;
                         break;
 
                     case CellState::Black:
-                        cell = "B";
+                        std::cout << FG_BLACK << " " << BLACK_PIECE;
                         break;
 
                     case CellState::White:
-                        cell = "W";
+                        std::cout << FG_WHITE << " " << WHITE_PIECE;
                         break;
                 }
-
-                row_str += cell + " ";
             }
 
-            drawText(row_str);
+            std::cout << " \n";
         }
+
+        /* Reset Screen */
+        std::cout << RESET_SCREEN;
     }
 
     void Display::drawInstructions(const std::string& text)
