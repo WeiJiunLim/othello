@@ -97,7 +97,7 @@ namespace othello
         // setCell({1, 3}, CellState::White);
         // setCell({2, 3}, CellState::White);
 
-        /* DEBUG: Test scenario 3 - Black passes, D3, B3 etc */
+        /* DEBUG: Test scenario 4 - Black passes, D3, B3 etc */
         // setCell({0, 0}, CellState::White);
         // setCell({0, 1}, CellState::White);
         // setCell({0, 2}, CellState::White);
@@ -113,6 +113,18 @@ namespace othello
         // setCell({3, 3}, CellState::Black);
         // setCell({0, 3}, CellState::Black);
         // setCell({1, 3}, CellState::White);
+
+        /* DEBUG: Test scenario 5 - Tie game */
+        // setCell({3, 3}, CellState::White);
+        // setCell({4, 4}, CellState::Black);
+        // setCell({4, 3}, CellState::Black);
+        // setCell({3, 4}, CellState::Black);
+
+        // setCell({0, 0}, CellState::White);
+        // setCell({0, 1}, CellState::White);
+        // setCell({0, 2}, CellState::White);
+        // setCell({0, 3}, CellState::White);
+        // setCell({0, 4}, CellState::White);
     }
 
     GameState GameBoard::getGameState() const

@@ -227,7 +227,7 @@ namespace othello
             case GameState::GameEnded:
             {
                 Player winner = board.getWinner();
-                std::string strWinner = "It's a TIE!";
+                std::string strWinner = "It's a TIE, we are all winners!";
 
                 if (winner == BLACK) {
                     strWinner = "BLACK wins!";
