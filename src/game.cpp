@@ -28,30 +28,22 @@ namespace othello
 {
     GameBoard::GameBoard()
     {
-        GameBoard::reset(GameType::TwoPlayer);
+        /* Start a 1 Player game by default */
+        GameBoard::reset(GameType::OnePlayer);
     }
 
     void GameBoard::reset(GameType newGameType)
     {
-        /* Set game type */
+        /* Set up game */
         setGameType(newGameType);
+        setGameState((newGameType == GameType::TwoPlayer) ? GameState::NewGame2P : GameState::NewGame1P);
 
         /* Set to black's turn */
         turnPlayer = CellState::Black;
 
         /* Reset player info */
         playerInfo[BLACK].name = "Player 1";
-
-        if (newGameType == GameType::TwoPlayer) {
-
-            playerInfo[WHITE].name = "Player 2";
-            setGameState(GameState::NewGame2P);
-        }
-        else {
-
-            playerInfo[WHITE].name = "Computer";
-            setGameState(GameState::NewGame1P);
-        }
+        playerInfo[WHITE].name = (newGameType == GameType::TwoPlayer) ? "Player 2" : "Computer";
         playerInfo[BLACK].score = 0;
         playerInfo[WHITE].score = 0;
 
@@ -241,7 +233,7 @@ namespace othello
         CellState playerColour = getTurnPlayer();
         CellState oppColour = getOppColour(playerColour);
 
-        /* Check if current move is valid, and apply changes if so */
+        /* Check if current move is valid, and apply moves to board if so */
         bool isValid = isMoveValid(gameInput.pos, playerColour, true);
 
         if (isValid) {
@@ -378,6 +370,7 @@ namespace othello
             }
         }
 
+        /* If valid and requested, apply change to the cell being checked */
         if (isValid && applyValidMoves){
             setCell(pos, playerColour);
         }
@@ -389,6 +382,9 @@ namespace othello
                                                             const Position direction,
                                                             const CellState playerColour)
     {
+        /* Scans for captures from the position in the direction specified.
+         * Returns a vector of the positions captured (if any). */
+
         std::vector<Position> captures;
         Position currentPos = pos;
         CellState oppColour = getOppColour(playerColour);

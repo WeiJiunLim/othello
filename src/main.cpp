@@ -28,9 +28,9 @@ constexpr const char* SW_NAME = "Othello";
 constexpr const char* SW_VERSION = "0.1";
 
 constexpr const char* SW_INSTRUCTIONS =
-"1: New One Player Game (Player vs Computer)\n\
-2: New Two Player Game (Player vs Player)\n\
-X: Exit Game\n\
+"[1]: New One Player Game (Player vs Computer)\n\
+[2]: New Two Player Game (Player vs Player)\n\
+[X]: Exit Game\n\
 [A-H][1-8]: Make a move, e.g. D3, E6\n";
 
 using namespace othello;
@@ -57,9 +57,6 @@ int main() {
     Display display(SW_NAME, SW_VERSION, SW_INSTRUCTIONS);
     GameBoard gameBoard;
     PlayerInput playerInput;
-
-    /* Start a 1 Player game by default */
-    gameBoard.reset(GameType::OnePlayer);
 
     while (true) {
 
