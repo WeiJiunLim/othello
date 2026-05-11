@@ -186,7 +186,7 @@ namespace othello
         std::string strTurn;
 
         /* Update string based on turn */
-        if (board.getIsBlackTurn()) {
+        if (board.getTurnPlayer() == CellState::Black) {
             strTurn = "BLACK";
         }
         else {

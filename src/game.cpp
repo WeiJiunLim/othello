@@ -34,7 +34,7 @@ namespace othello
     void GameBoard::reset(GameType gameType)
     {
         /* Set to black's turn */
-        isBlackTurn = true;
+        turnPlayer = CellState::Black;
 
         /* Reset player info */
         playerInfo[BLACK].name = "Player 1";
@@ -82,14 +82,14 @@ namespace othello
         return (playerInfo);
     }
 
-    bool GameBoard::getIsBlackTurn() const
+    CellState GameBoard::getTurnPlayer() const
     {
-        return (isBlackTurn);
+        return (turnPlayer);
     }
 
-    void GameBoard::toggleIsBlackTurn()
+    void GameBoard::toggleTurnPlayer()
     {
-        isBlackTurn = !isBlackTurn;
+        turnPlayer = (turnPlayer == CellState::Black) ? CellState::White : CellState::Black;
     }
 
     CellState GameBoard::getCell(Position pos) const
@@ -147,21 +147,124 @@ namespace othello
 
     void GameBoard::move(GameInput& gameInput)
     {
-        /* Input has been verified before calling this function */
+        /* Move is valid if all criteria are met:
+         * - position is unoccupied
+         * - can capture opponent's cells in at least one direction */
+        bool isValid = false;
+        CellState playerColour = getTurnPlayer();
 
-        /* Check if move is valid */
-        // TODO: isMoveValid(getIsBlackTurn(), gameInput.pos)
+        if (getCell(gameInput.pos) == CellState::Empty)
         {
-            /* Update game board */
-            setCell(gameInput.pos, (getIsBlackTurn() ? CellState::Black : CellState::White));
-            toggleIsBlackTurn();
-            setGameState(GameState::ValidMove);
+            /* Scan for captures around the position in all directions */
+            for (int idx = 0; idx < NUM_DIR; idx++) {
 
-            // TODO: Update flipped cells as well
+                std::vector<Position> captures = getCapturesInDirection(gameInput.pos,
+                                                                        DIRECTIONS[idx],
+                                                                        playerColour);
+                if (captures.empty() == false) {
+
+                    /* Able to capture opponent's cells, move is valid,
+                     * apply move (flip captured cells), and continue scanning. */
+                    isValid = true;
+
+                    for (Position capPos : captures) {
+                        setCell(capPos, playerColour);
+                    }
+                }
+            }
         }
-        // else {
-        //     setGameState(GameState::InvalidMove);
-        // }
 
+        if (isValid) {
+
+            setCell(gameInput.pos, playerColour);
+            toggleTurnPlayer();
+            setGameState(GameState::ValidMove);
+        }
+        else {
+
+            setGameState(GameState::InvalidMove);
+        }
+    }
+
+    CellState GameBoard::getOppColour(const CellState playerColour)
+    {
+        return ((playerColour == CellState::Black) ? CellState::White : CellState::Black);
+    }
+
+    std::vector<Position> GameBoard::getCapturesInDirection(const Position pos,
+                                                            const Position direction,
+                                                            const CellState playerColour)
+    {
+        std::vector<Position> captures;
+        Position currentPos = pos;
+        CellState oppColour = getOppColour(playerColour);
+        bool oppCellFound = false;
+        bool ableToCapture = false;
+
+        while (1)
+        {
+            CellState cellColour;
+
+            /* Check for edge */
+            if (((currentPos.row + direction.row) < 0) || ((currentPos.row + direction.row) >= BOARD_SIZE) ||
+                ((currentPos.col + direction.col) < 0) || ((currentPos.col + direction.col) >= BOARD_SIZE)) {
+                /* Over the board edge, stop scan, unable to capture */
+                break;
+            }
+
+            /* Get next cell in direction */
+            currentPos.row += direction.row;
+            currentPos.col += direction.col;
+            cellColour = getCell(currentPos);
+
+            if (oppCellFound == false) {
+
+                /* Only look for opponent's cell */
+                if (cellColour == oppColour) {
+
+                    /* Opponent's cell found.
+                     * Set flag, and continue scan.
+                     * Tentatively add cell to captures vector. */
+                    oppCellFound = true;
+                    captures.push_back(currentPos);
+
+                } else {
+
+                    /* Not opponent's cell, stop scan */
+                    break;
+                }
+            }
+            else {
+
+                /* At least one opponent's cell found previously, now scan for:
+                 * - opponent's cell: continue scan
+                 * - own cell: stop scan, able to capture
+                 * - empty cell: stop scan, unable to capture */
+                if (cellColour == oppColour) {
+
+                    oppCellFound = true;
+                    captures.push_back(currentPos);
+
+                } else if (cellColour == playerColour) {
+
+                    ableToCapture = true;
+                    captures.push_back(currentPos);
+                    break;
+
+                }
+                else {
+                    /* Empty cell */
+                    break;
+                }
+            }
+        }
+
+        if (ableToCapture == false) {
+
+            /* Unable to capture, so clear vector */
+            captures.clear();
+        }
+
+        return (captures);
     }
 }

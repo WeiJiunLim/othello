@@ -13,6 +13,7 @@
 
 #include "types.hpp"
 #include <array>
+#include <vector>
 
 /* ====================================================================================================================
  *  Namespace Declarations
@@ -38,20 +39,31 @@ namespace othello
             GameState getGameState() const;
             CellState getCell(Position pos) const;
             const std::array<PlayerInfo, NUM_PLAYERS>& getPlayerInfo() const;
-            bool getIsBlackTurn() const;
+            CellState getTurnPlayer() const;
             int getScore(enum Player player);
             void move(GameInput& gameInput);
 
         private:
+
+            /* Directions to scan for captures around a position */
+            static constexpr int NUM_DIR = 8;
+            static constexpr Position DIRECTIONS[NUM_DIR] = {{-1, -1}, {-1, 0}, {-1, 1},
+                                                             { 0, -1},          { 0, 1},
+                                                             { 1, -1}, { 1, 0}, { 1, 1}};
+
             GameState gameState;
             CellState board[BOARD_SIZE][BOARD_SIZE];
+            CellState turnPlayer;
             std::array<PlayerInfo, NUM_PLAYERS> playerInfo;
-            bool isBlackTurn;
 
             void setCell(Position pos, CellState state);
-            void toggleIsBlackTurn();
+            void toggleTurnPlayer();
             void incScore(enum Player player);
             void decScore(enum Player player);
+            CellState getOppColour(const CellState playerColour);
+            std::vector<Position> getCapturesInDirection(const Position pos,
+                                                         const Position direction,
+                                                         const CellState playerColour);
     };
 
 }
