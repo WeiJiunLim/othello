@@ -1,4 +1,12 @@
 #!/bin/bash
+set -e
+
+# Default to Linux as Target
+TARGET=${1:-linux}
+
+# ===================================================================
+# Paths
+# ===================================================================
 
 # Get script folder
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
@@ -11,21 +19,54 @@ echo "PROJECT_ROOT = $PROJECT_ROOT"
 # Go to project root
 cd "$PROJECT_ROOT"
 
-# Delete build folder if it exists
-# echo "Deleting old build folder..."
-# rm -rf build
+# ===================================================================
+# Build Folder
+# ===================================================================
 
-# Create build folder
-echo "Creating new build folder..."
-mkdir -p build
+if [ "$TARGET" = "windows" ]; then
+    BUILD_DIR="build-win"
+else
+    BUILD_DIR="build"
+fi
 
-# Go to build folder
-cd build
+echo "Deleting old build folder: $BUILD_DIR"
+rm -rf "$BUILD_DIR"
 
-# Run CMake
-echo "Running CMake..."
-cmake ..
+echo "Creating build folder: $BUILD_DIR"
+mkdir -p "$BUILD_DIR"
 
-# Compile 
-echo "Running make..."
-make
+cd "$BUILD_DIR"
+
+# ===================================================================
+# Configure + Build
+# ===================================================================
+
+if [ "$TARGET" = "windows" ]; then
+
+    echo "Configuring Windows cross-compile..."
+
+    cmake .. \
+        -DCMAKE_SYSTEM_NAME=Windows \
+        -DCMAKE_C_COMPILER=x86_64-w64-mingw32-gcc \
+        -DCMAKE_CXX_COMPILER=x86_64-w64-mingw32-g++
+
+elif [ "$TARGET" = "linux" ]; then
+
+    echo "Configuring Linux build..."
+
+    cmake ..
+
+else
+    echo "Unknown target: $TARGET"
+    echo "Usage:"
+    echo "  ./scripts/build.sh linux"
+    echo "  ./scripts/build.sh windows"
+    exit 1
+fi
+
+# ===================================================================
+# Compile
+# ===================================================================
+
+echo "Building..."
+cmake --build .

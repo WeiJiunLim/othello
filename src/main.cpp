@@ -15,6 +15,10 @@
 #include "input.hpp"
 #include <iostream>
 
+#ifdef _WIN32
+#include <windows.h>
+#endif
+
 /* ====================================================================================================================
  *  Constants / Macros
  * ================================================================================================================= */
@@ -32,10 +36,23 @@ X: Exit Game\n\
 using namespace othello;
 
  /* ====================================================================================================================
- *  Public Functions
- * ================================================================================================================= */
+  *  Local Function Prototypes
+  * ================================================================================================================= */
+
+#ifdef _WIN32
+void initWindowsTerminal();
+#endif
+
+ /* ====================================================================================================================
+  *  Public Functions
+  * ================================================================================================================= */
 
 int main() {
+
+#ifdef _WIN32
+    /* For Windows compatibility */
+    initWindowsTerminal();
+#endif
 
     Display display(SW_NAME, SW_VERSION, SW_INSTRUCTIONS);
     GameBoard gameBoard;
@@ -114,3 +131,33 @@ int main() {
     return 0;
 }
 
+ /* ====================================================================================================================
+  *  Local Functions
+  * ================================================================================================================= */
+
+#ifdef _WIN32
+/* Function to allow UTF-8 output, and Virtual Terminal ANSI processing on Windows.
+ * Copied from online */
+void initWindowsTerminal()
+{
+    /* Enable UTF-8 output */
+    SetConsoleOutputCP(CP_UTF8);
+    SetConsoleCP(CP_UTF8);
+
+    /* Enable ANSI escape sequence processing */
+    HANDLE hOut = GetStdHandle(STD_OUTPUT_HANDLE);
+
+    if (hOut == INVALID_HANDLE_VALUE)
+        return;
+
+    DWORD dwMode = 0;
+
+    if (!GetConsoleMode(hOut, &dwMode))
+        return;
+
+    dwMode |= ENABLE_VIRTUAL_TERMINAL_PROCESSING;
+
+    if (!SetConsoleMode(hOut, dwMode))
+        return;
+}
+#endif

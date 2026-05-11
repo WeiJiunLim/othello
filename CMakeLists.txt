@@ -16,9 +16,16 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 add_library(project_warnings INTERFACE)
 
 target_compile_options(project_warnings INTERFACE
-    -Wall
-    -Wextra
-    -Wpedantic
+    $<$<CXX_COMPILER_ID:GNU,Clang>:-Wall -Wextra -Wpedantic>
+    $<$<CXX_COMPILER_ID:MSVC>:/W4>
+)
+
+target_link_options(project_warnings INTERFACE
+    $<$<AND:$<CXX_COMPILER_ID:GNU>,$<PLATFORM_ID:Windows>>:
+        -static
+        -static-libgcc
+        -static-libstdc++
+    >
 )
 
 # =====================================================================================================================
@@ -54,6 +61,10 @@ target_link_libraries(input PRIVATE project_warnings)
 # =====================================================================================================================
 # Main Executable
 # =====================================================================================================================
+
+if (MSVC)
+    add_compile_options(/utf-8)
+endif()
 
 add_executable(othello
     src/main.cpp
