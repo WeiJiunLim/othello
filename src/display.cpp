@@ -75,7 +75,6 @@ namespace othello
 
         /* Refresh Input section */
         drawInput(board);
-
     }
 
     void Display::clear()
@@ -183,42 +182,74 @@ namespace othello
         moveCursor(pos);
 
         std::string str;
-        std::string strTurn;
+        std::string strPlayerColour;
+        std::string strOppColour;
 
         /* Update string based on turn */
         if (board.getTurnPlayer() == CellState::Black) {
-            strTurn = "BLACK";
+            strPlayerColour = "BLACK";
+            strOppColour = "WHITE";
         }
         else {
-            strTurn = "WHITE";
+            strPlayerColour = "WHITE";
+            strOppColour = "BLACK";
         }
 
         /* Change text depending on Game State */
         switch (board.getGameState())
         {
             case GameState::NewGamePVP:
-                str = "New PvP Game started.\n" + strTurn + "'s turn: ";
+                str = "New PvP Game started.\n" + strPlayerColour + "'s turn: ";
                 break;
 
             case GameState::NewGamePVC:
-                str = "New PvC Game started.\n" + strTurn + "'s turn: ";
+                str = "New PvC Game started.\n" + strPlayerColour + "'s turn: ";
                 break;
 
             case GameState::Exit:
                 str = "Good bye!";
                 break;
 
-            case GameState::ValidMove:
-                str = "Move executed - " + board.gameInput.strInput + "\n" + strTurn + "'s turn: ";
+            case GameState::ValidMoveAndNextPlayerHasMoves:
+                str = "Move executed - " + board.gameInput.strInput + "\n" + strPlayerColour + "'s turn: ";
+                break;
+
+            case GameState::ValidMoveAndNextPlayerNoMoves:
+                str = "Move executed - " + board.gameInput.strInput + ". " +
+                      strOppColour + " has no valid moves, turn passes back to " + strPlayerColour + "\n" +
+                      strPlayerColour + "'s turn: ";
                 break;
 
             case GameState::InvalidMove:
-                str = "Invalid Move! - " + board.gameInput.strInput + "\n" + strTurn + "'s turn: ";
+                str = "Invalid Move! - " + board.gameInput.strInput + "\n" + strPlayerColour + "'s turn: ";
+                break;
+
+            case GameState::GameEnded:
+            {
+                Player winner = board.getWinner();
+                std::string strWinner = "It's a TIE!";
+
+                if (winner == BLACK) {
+                    strWinner = "BLACK wins!";
+                }
+                else if (winner == WHITE) {
+                    strWinner = "WHITE wins!";
+                }
+
+                str = "Game completed - no valid moves left! " + strWinner + "\nnew pv(P) game, (N)ew pvc game, or e(X)it?";
+                break;
+            }
+
+            case GameState::InvalidInputAtGameEnded:
+                str = "Invalid Input!\nnew pv(P) game, (N)ew pvc game, or e(X)it?";
                 break;
 
             case GameState::InvalidInput:
+                str = "Invalid Input!\n" + strPlayerColour + "'s turn: ";
+                break;
+
             default:
-                str = "Invalid Input! - " + board.gameInput.strInput + "\n" + strTurn + "'s turn: ";
+                str = "Error: Unknown Game state!";
                 break;
         }
 

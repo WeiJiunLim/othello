@@ -65,6 +65,54 @@ namespace othello
         setCell({4, 4}, CellState::White);
         setCell({4, 3}, CellState::Black);
         setCell({3, 4}, CellState::Black);
+
+        /* DEBUG: Test scenario 1 - Black always wins */
+        // setCell({3, 3}, CellState::White);
+        // setCell({4, 4}, CellState::Black);
+        // setCell({4, 3}, CellState::Black);
+        // setCell({3, 4}, CellState::Black);
+
+        /* DEBUG: Test scenario 2 - White easy win, E6 */
+        // setCell({2, 4}, CellState::White);
+        // setCell({3, 3}, CellState::White);
+        // setCell({4, 4}, CellState::White);
+        // setCell({4, 3}, CellState::White);
+        // setCell({3, 4}, CellState::Black);
+
+        /* DEBUG: Test scenario 3 - White passes, B3, C3 etc */
+        // setCell({0, 0}, CellState::Black);
+        // setCell({0, 1}, CellState::Black);
+        // setCell({0, 2}, CellState::Black);
+        // setCell({1, 0}, CellState::Black);
+        // setCell({1, 1}, CellState::White);
+        // setCell({1, 2}, CellState::White);
+        // setCell({2, 0}, CellState::Black);
+        // setCell({0, 2}, CellState::Black);
+
+        // setCell({3, 0}, CellState::White);
+        // setCell({3, 1}, CellState::White);
+        // setCell({3, 2}, CellState::White);
+        // setCell({3, 3}, CellState::White);
+        // setCell({0, 3}, CellState::White);
+        // setCell({1, 3}, CellState::White);
+        // setCell({2, 3}, CellState::White);
+
+        /* DEBUG: Test scenario 3 - Black passes, D3, B3 etc */
+        // setCell({0, 0}, CellState::White);
+        // setCell({0, 1}, CellState::White);
+        // setCell({0, 2}, CellState::White);
+        // setCell({1, 0}, CellState::White);
+        // setCell({1, 1}, CellState::Black);
+        // setCell({1, 2}, CellState::Black);
+        // setCell({2, 0}, CellState::White);
+        // setCell({0, 2}, CellState::White);
+
+        // setCell({3, 0}, CellState::Black);
+        // setCell({3, 1}, CellState::Black);
+        // setCell({3, 2}, CellState::Black);
+        // setCell({3, 3}, CellState::Black);
+        // setCell({0, 3}, CellState::Black);
+        // setCell({1, 3}, CellState::White);
     }
 
     GameState GameBoard::getGameState() const
@@ -75,6 +123,19 @@ namespace othello
     void GameBoard::setGameState(GameState state)
     {
         gameState = state;
+    }
+
+    bool GameBoard::isGameRunning()
+    {
+        bool isGameRunning = false;
+
+        if ((getGameState() != othello::GameState::GameEnded) &&
+            (getGameState() != othello::GameState::InvalidInputAtGameEnded)) {
+
+            isGameRunning = true;
+        }
+
+        return (isGameRunning);
     }
 
     const std::array<PlayerInfo, NUM_PLAYERS>& GameBoard::getPlayerInfo() const
@@ -130,58 +191,74 @@ namespace othello
         }
     }
 
-    int GameBoard::getScore(enum Player player)
+    int GameBoard::getScore(Player player)
     {
         return(playerInfo[player].score);
     }
 
-    void GameBoard::incScore(enum Player player)
+    void GameBoard::incScore(Player player)
     {
         playerInfo[player].score++;
     }
 
-    void GameBoard::decScore(enum Player player)
+    void GameBoard::decScore(Player player)
     {
         playerInfo[player].score--;
     }
 
+    Player GameBoard::getWinner() const
+    {
+        return (winner);
+    }
+
     void GameBoard::move(GameInput& gameInput)
     {
-        /* Move is valid if all criteria are met:
-         * - position is unoccupied
-         * - can capture opponent's cells in at least one direction */
-        bool isValid = false;
         CellState playerColour = getTurnPlayer();
+        CellState oppColour = getOppColour(playerColour);
 
-        if (getCell(gameInput.pos) == CellState::Empty)
-        {
-            /* Scan for captures around the position in all directions */
-            for (int idx = 0; idx < NUM_DIR; idx++) {
-
-                std::vector<Position> captures = getCapturesInDirection(gameInput.pos,
-                                                                        DIRECTIONS[idx],
-                                                                        playerColour);
-                if (captures.empty() == false) {
-
-                    /* Able to capture opponent's cells, move is valid,
-                     * apply move (flip captured cells), and continue scanning. */
-                    isValid = true;
-
-                    for (Position capPos : captures) {
-                        setCell(capPos, playerColour);
-                    }
-                }
-            }
-        }
+        /* Check if current move is valid, and apply changes if so */
+        bool isValid = isMoveValid(gameInput.pos, playerColour, true);
 
         if (isValid) {
 
-            setCell(gameInput.pos, playerColour);
-            toggleTurnPlayer();
-            setGameState(GameState::ValidMove);
+            /* Check if next player has valid moves to make */
+            if (hasValidMoves(oppColour, false))
+            {
+                /* Next player has moves, change turn to next player */
+                toggleTurnPlayer();
+                setGameState(GameState::ValidMoveAndNextPlayerHasMoves);
+            }
+            else {
+
+                /* Check if current player has valid moves to make */
+                if (hasValidMoves(playerColour, false)) {
+
+                    /* Maintain current player */
+                    setGameState(GameState::ValidMoveAndNextPlayerNoMoves);
+                }
+                else {
+
+                    /* Nobody has moves left, end game */
+
+                    /* Declare winner */
+                    if (getScore(BLACK) > getScore(WHITE)) {
+                        winner = BLACK;
+                    }
+                    else if (getScore(BLACK) < getScore(WHITE)) {
+                        winner = WHITE;
+                    }
+                    else {
+                        /* It's a tie! */
+                        winner = NUM_PLAYERS;
+                    }
+
+                    setGameState(GameState::GameEnded);
+                }
+            }
         }
         else {
 
+            /* Invalid move, maintain current player */
             setGameState(GameState::InvalidMove);
         }
     }
@@ -189,6 +266,65 @@ namespace othello
     CellState GameBoard::getOppColour(const CellState playerColour)
     {
         return ((playerColour == CellState::Black) ? CellState::White : CellState::Black);
+    }
+
+    bool GameBoard::hasValidMoves(const CellState playerColour, const bool applyValidMoves)
+    {
+        /* Loop through each cell, and look for at least one valid move for the player */
+        for (int row = 0; row < BOARD_SIZE; row++) {
+
+            for (int col = 0; col < BOARD_SIZE; col++) {
+
+                if (isMoveValid({row, col}, playerColour, applyValidMoves)) {
+                    return (true);
+                }
+            }
+        }
+
+        return (false);
+    }
+
+    bool GameBoard::isMoveValid(const Position pos, const CellState playerColour, const bool applyValidMoves)
+    {
+        /* Move is valid if all the following criteria are met:
+         * - position is empty
+         * - can capture opponent's cells in at least one direction */
+        bool isValid = false;
+
+        if (getCell(pos) == CellState::Empty)
+        {
+            /* Scan for captures around the position in all directions */
+            for (int idx = 0; idx < NUM_DIR; idx++) {
+
+                std::vector<Position> captures = getCapturesInDirection(pos,
+                                                                        DIRECTIONS[idx],
+                                                                        playerColour);
+                if (captures.empty() == false) {
+
+                    /* Able to capture opponent's cells, move is valid.
+                     * Either:
+                     * - Apply move (flip captured cells) and continue scanning;
+                     * - OR stop scanning and exit */
+                    isValid = true;
+
+                    if (applyValidMoves) {
+
+                        for (Position capPos : captures) {
+                            setCell(capPos, playerColour);
+                        }
+                    }
+                    else {
+                        break;
+                    }
+                }
+            }
+        }
+
+        if (isValid && applyValidMoves){
+            setCell(pos, playerColour);
+        }
+
+        return (isValid);
     }
 
     std::vector<Position> GameBoard::getCapturesInDirection(const Position pos,
@@ -201,7 +337,7 @@ namespace othello
         bool oppCellFound = false;
         bool ableToCapture = false;
 
-        while (1)
+        while (true)
         {
             CellState cellColour;
 
@@ -248,7 +384,6 @@ namespace othello
                 } else if (cellColour == playerColour) {
 
                     ableToCapture = true;
-                    captures.push_back(currentPos);
                     break;
 
                 }

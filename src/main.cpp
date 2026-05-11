@@ -22,11 +22,12 @@
 /* Software info */
 constexpr const char* SW_NAME = "Othello";
 constexpr const char* SW_VERSION = "0.1";
+
 constexpr const char* SW_INSTRUCTIONS =
 "P: New Game (Player vs Player)\n\
 N: New Game (Player vs Computer)\n\
 X: Exit Game\n\
-[col][row]: Make a move [A-H][1-8], e.g. D3, E6\n";
+[A-H][1-8]: Make a move, e.g. D3, E6\n";
 
  /* ====================================================================================================================
  *  Public Functions
@@ -41,7 +42,7 @@ int main() {
     /* Start a PVP game by default */
     gameBoard.reset(othello::GameType::PVP);
 
-    while (1) {
+    while (true) {
 
         /* Refresh game display */
         display.refreshGame(gameBoard);
@@ -69,12 +70,25 @@ int main() {
                 break;
 
             case othello::InputType::Move:
-                gameBoard.move(gameBoard.gameInput);
+            {
+                if (gameBoard.isGameRunning()) {
+                    gameBoard.move(gameBoard.gameInput);
+                }
+                else {
+                    gameBoard.setGameState(othello::GameState::InvalidInputAtGameEnded);
+                }
                 break;
+            }
 
             default:
                 /* Invalid input */
-                gameBoard.setGameState(othello::GameState::InvalidInput);
+                if (gameBoard.isGameRunning()) {
+                    gameBoard.setGameState(othello::GameState::InvalidInput);
+                }
+                else {
+                    gameBoard.setGameState(othello::GameState::InvalidInputAtGameEnded);
+                }
+
                 break;
         }
 

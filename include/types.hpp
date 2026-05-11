@@ -62,9 +62,12 @@ namespace othello
 
         NewGamePVP,
         NewGamePVC,
-        ValidMove,
+        ValidMoveAndNextPlayerHasMoves,
+        ValidMoveAndNextPlayerNoMoves,
         InvalidMove,
+        GameEnded,
         InvalidInput,
+        InvalidInputAtGameEnded,
         Exit
     };
 

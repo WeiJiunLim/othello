@@ -37,10 +37,12 @@ namespace othello
             void reset(GameType gameType);
             void setGameState(GameState state);
             GameState getGameState() const;
+            bool isGameRunning();
             CellState getCell(Position pos) const;
             const std::array<PlayerInfo, NUM_PLAYERS>& getPlayerInfo() const;
             CellState getTurnPlayer() const;
-            int getScore(enum Player player);
+            int getScore(Player player);
+            Player getWinner() const;
             void move(GameInput& gameInput);
 
         private:
@@ -55,12 +57,15 @@ namespace othello
             CellState board[BOARD_SIZE][BOARD_SIZE];
             CellState turnPlayer;
             std::array<PlayerInfo, NUM_PLAYERS> playerInfo;
+            Player winner;
 
             void setCell(Position pos, CellState state);
             void toggleTurnPlayer();
-            void incScore(enum Player player);
-            void decScore(enum Player player);
+            void incScore(Player player);
+            void decScore(Player player);
             CellState getOppColour(const CellState playerColour);
+            bool hasValidMoves(const CellState playerColour, const bool applyValidMoves);
+            bool isMoveValid(const Position pos, const CellState playerColour, const bool applyValidMoves);
             std::vector<Position> getCapturesInDirection(const Position pos,
                                                          const Position direction,
                                                          const CellState playerColour);
