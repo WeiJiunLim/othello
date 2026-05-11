@@ -31,15 +31,18 @@ namespace othello
         GameBoard::reset(GameType::TwoPlayer);
     }
 
-    void GameBoard::reset(GameType gameType)
+    void GameBoard::reset(GameType newGameType)
     {
+        /* Set game type */
+        setGameType(newGameType);
+
         /* Set to black's turn */
         turnPlayer = CellState::Black;
 
         /* Reset player info */
         playerInfo[BLACK].name = "Player 1";
 
-        if (gameType == GameType::TwoPlayer) {
+        if (newGameType == GameType::TwoPlayer) {
 
             playerInfo[WHITE].name = "Player 2";
             setGameState(GameState::NewGame2P);
@@ -150,6 +153,16 @@ namespace othello
         return (isGameRunning);
     }
 
+    GameType GameBoard::getGameType() const {
+
+        return (gameType);
+    }
+
+    void GameBoard::setGameType(GameType newGameType) {
+
+        gameType = newGameType;
+    }
+
     const std::array<PlayerInfo, NUM_PLAYERS>& GameBoard::getPlayerInfo() const
     {
         return (playerInfo);
@@ -223,7 +236,7 @@ namespace othello
         return (winner);
     }
 
-    void GameBoard::move(GameInput& gameInput)
+    void GameBoard::playerMove(GameInput& gameInput)
     {
         CellState playerColour = getTurnPlayer();
         CellState oppColour = getOppColour(playerColour);
@@ -275,9 +288,42 @@ namespace othello
         }
     }
 
+    GameInput GameBoard::compMove()
+    {
+        CellState playerColour = getTurnPlayer();
+        GameInput compGameInput = {.type = InputType::Move,
+                                   .pos = {0, 0},
+                                   .strInput = "A1"};
+
+        /* Get first valid move position */
+        (void) findFirstValidMove(playerColour, compGameInput.pos);
+        compGameInput.strInput[0] = compGameInput.pos.col + 'A';
+        compGameInput.strInput[1] = compGameInput.pos.row + '1';
+
+        return (compGameInput);
+    }
+
     CellState GameBoard::getOppColour(const CellState playerColour)
     {
         return ((playerColour == CellState::Black) ? CellState::White : CellState::Black);
+    }
+
+    bool GameBoard::findFirstValidMove(const CellState playerColour, Position& validMovePos)
+    {
+        /* Loop through each cell, and look for the first valid move for the player */
+        for (int row = 0; row < BOARD_SIZE; row++) {
+
+            for (int col = 0; col < BOARD_SIZE; col++) {
+
+                if (isMoveValid({row, col}, playerColour, false)) {
+
+                    validMovePos = {row, col};
+                    return (true);
+                }
+            }
+        }
+
+        return (false);
     }
 
     bool GameBoard::hasValidMoves(const CellState playerColour, const bool applyValidMoves)

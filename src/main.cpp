@@ -29,53 +29,66 @@ constexpr const char* SW_INSTRUCTIONS =
 X: Exit Game\n\
 [A-H][1-8]: Make a move, e.g. D3, E6\n";
 
+using namespace othello;
+
  /* ====================================================================================================================
  *  Public Functions
  * ================================================================================================================= */
 
 int main() {
 
-    othello::Display display(SW_NAME, SW_VERSION, SW_INSTRUCTIONS);
-    othello::GameBoard gameBoard;
-    othello::PlayerInput playerInput;
+    Display display(SW_NAME, SW_VERSION, SW_INSTRUCTIONS);
+    GameBoard gameBoard;
+    PlayerInput playerInput;
 
     /* Start a 2 Player game by default */
-    gameBoard.reset(othello::GameType::TwoPlayer);
+    gameBoard.reset(GameType::TwoPlayer);
 
     while (true) {
 
         /* Refresh game display */
         display.refreshGame(gameBoard);
 
-        /* Get user input */
-        std::string inputStr;
-        std::getline(std::cin, inputStr);
+        /* Get input, either from computer or human */
+        if ((gameBoard.isGameRunning()) &&
+            (gameBoard.getGameType() == GameType::OnePlayer) &&
+            (gameBoard.getTurnPlayer() == CellState::White)) {
 
-        /* Parse user input */
-        gameBoard.gameInput = playerInput.parseInput(inputStr);
+            /* Computer's turn */
+            gameBoard.gameInput = gameBoard.compMove();
+        }
+        else {
 
-        /* Take action on user input */
+            /* Get user input */
+            std::string inputStr;
+            std::getline(std::cin, inputStr);
+
+            /* Parse user input */
+            gameBoard.gameInput = playerInput.parseInput(inputStr);
+        }
+
+        /* Take action on the input */
         switch (gameBoard.gameInput.type)
         {
-            case othello::InputType::NewGame2P:
-                gameBoard.reset(othello::GameType::TwoPlayer);
+            case InputType::NewGame2P:
+                gameBoard.reset(GameType::TwoPlayer);
                 break;
 
-            case othello::InputType::NewGame1P:
-                gameBoard.reset(othello::GameType::OnePlayer);
+            case InputType::NewGame1P:
+                gameBoard.reset(GameType::OnePlayer);
                 break;
 
-            case othello::InputType::Exit:
-                gameBoard.setGameState(othello::GameState::Exit);
+            case InputType::Exit:
+                gameBoard.setGameState(GameState::Exit);
                 break;
 
-            case othello::InputType::Move:
+            case InputType::Move:
             {
                 if (gameBoard.isGameRunning()) {
-                    gameBoard.move(gameBoard.gameInput);
+                    gameBoard.playerMove(gameBoard.gameInput);
                 }
                 else {
-                    gameBoard.setGameState(othello::GameState::InvalidInputAtGameEnded);
+                    gameBoard.setGameState(GameState::InvalidInputAtGameEnded);
                 }
                 break;
             }
@@ -83,17 +96,17 @@ int main() {
             default:
                 /* Invalid input */
                 if (gameBoard.isGameRunning()) {
-                    gameBoard.setGameState(othello::GameState::InvalidInput);
+                    gameBoard.setGameState(GameState::InvalidInput);
                 }
                 else {
-                    gameBoard.setGameState(othello::GameState::InvalidInputAtGameEnded);
+                    gameBoard.setGameState(GameState::InvalidInputAtGameEnded);
                 }
 
                 break;
         }
 
         /* Check for exit request */
-        if (gameBoard.getGameState() == othello::GameState::Exit) {
+        if (gameBoard.getGameState() == GameState::Exit) {
             break;
         }
     }
